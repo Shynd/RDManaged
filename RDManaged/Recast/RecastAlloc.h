@@ -47,7 +47,7 @@ public:
 	inline rcIntArray(int n) : m_data(0), m_size(0), m_cap(0) { resize(n); }
 	inline ~rcIntArray() { rcFree(m_data); }
 	void resize(int n);
-	inline void push(int item) { resize(m_size + 1); m_data[m_size - 1] = item; }
+	inline void push(int item) { resize(m_size+1); m_data[m_size-1] = item; }
 	inline int pop() { if (m_size > 0) m_size--; return m_data[m_size]; }
 	inline const int& operator[](int i) const { return m_data[i]; }
 	inline int& operator[](int i) { return m_data[i]; }

@@ -15,7 +15,7 @@
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 //
-
+ 
 #ifndef RECAST_H
 #define RECAST_H
 
@@ -94,7 +94,7 @@ protected:
 	virtual void doStartTimer(const rcTimerLabel /*label*/) {}
 	virtual void doStopTimer(const rcTimerLabel /*label*/) {}
 	virtual int doGetAccumulatedTime(const rcTimerLabel /*label*/) const { return -1; }
-
+	
 	bool m_logEnabled;
 	bool m_timerEnabled;
 };
@@ -125,7 +125,7 @@ struct rcConfig
 // Define number of bits in the above structure for smin/smax.
 // The max height is used for clamping rasterized values.
 static const int RC_SPAN_HEIGHT_BITS = 13;
-static const int RC_SPAN_MAX_HEIGHT = (1 << RC_SPAN_HEIGHT_BITS) - 1;
+static const int RC_SPAN_MAX_HEIGHT = (1<<RC_SPAN_HEIGHT_BITS)-1;
 
 // Heightfield span.
 struct rcSpan
@@ -229,7 +229,7 @@ void rcFreeContourSet(rcContourSet* cset);
 //   y = bmin[1] + verts[i*3+1]*ch;
 //   z = bmin[2] + verts[i*3+2]*cs;
 struct rcPolyMesh
-{
+{	
 	unsigned short* verts;	// Vertices of the mesh, 3 elements per vertex.
 	unsigned short* polys;	// Polygons of the mesh, nvp*2 elements per polygon.
 	unsigned short* regs;	// Region ID of the polygons.
@@ -307,27 +307,27 @@ static const int RC_NOT_CONNECTED = 0x3f;
 // Compact span neighbour helpers.
 inline void rcSetCon(rcCompactSpan& s, int dir, int i)
 {
-	const unsigned int shift = (unsigned int)dir * 6;
+	const unsigned int shift = (unsigned int)dir*6;
 	unsigned int con = s.con;
 	s.con = (con & ~(0x3f << shift)) | (((unsigned int)i & 0x3f) << shift);
 }
 
 inline int rcGetCon(const rcCompactSpan& s, int dir)
 {
-	const unsigned int shift = (unsigned int)dir * 6;
+	const unsigned int shift = (unsigned int)dir*6;
 	return (s.con >> shift) & 0x3f;
 }
 
 inline int rcGetDirOffsetX(int dir)
 {
 	const int offset[4] = { -1, 0, 1, 0, };
-	return offset[dir & 0x03];
+	return offset[dir&0x03];
 }
 
 inline int rcGetDirOffsetY(int dir)
 {
 	const int offset[4] = { 0, 1, 0, -1 };
-	return offset[dir & 0x03];
+	return offset[dir&0x03];
 }
 
 // Common helper functions
@@ -342,35 +342,35 @@ float rcSqrt(float x);
 // Common vector helper functions.
 inline void rcVcross(float* dest, const float* v1, const float* v2)
 {
-	dest[0] = v1[1] * v2[2] - v1[2] * v2[1];
-	dest[1] = v1[2] * v2[0] - v1[0] * v2[2];
-	dest[2] = v1[0] * v2[1] - v1[1] * v2[0];
+	dest[0] = v1[1]*v2[2] - v1[2]*v2[1];
+	dest[1] = v1[2]*v2[0] - v1[0]*v2[2];
+	dest[2] = v1[0]*v2[1] - v1[1]*v2[0];
 }
 
 inline float rcVdot(const float* v1, const float* v2)
 {
-	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
 
 inline void rcVmad(float* dest, const float* v1, const float* v2, const float s)
 {
-	dest[0] = v1[0] + v2[0] * s;
-	dest[1] = v1[1] + v2[1] * s;
-	dest[2] = v1[2] + v2[2] * s;
+	dest[0] = v1[0]+v2[0]*s;
+	dest[1] = v1[1]+v2[1]*s;
+	dest[2] = v1[2]+v2[2]*s;
 }
 
 inline void rcVadd(float* dest, const float* v1, const float* v2)
 {
-	dest[0] = v1[0] + v2[0];
-	dest[1] = v1[1] + v2[1];
-	dest[2] = v1[2] + v2[2];
+	dest[0] = v1[0]+v2[0];
+	dest[1] = v1[1]+v2[1];
+	dest[2] = v1[2]+v2[2];
 }
 
 inline void rcVsub(float* dest, const float* v1, const float* v2)
 {
-	dest[0] = v1[0] - v2[0];
-	dest[1] = v1[1] - v2[1];
-	dest[2] = v1[2] - v2[2];
+	dest[0] = v1[0]-v2[0];
+	dest[1] = v1[1]-v2[1];
+	dest[2] = v1[2]-v2[2];
 }
 
 inline void rcVmin(float* mn, const float* v)
@@ -420,7 +420,7 @@ inline void rcVnormalize(float* v)
 
 inline bool rcVequal(const float* p0, const float* p1)
 {
-	static const float thr = rcSqr(1.0f / 16384.0f);
+	static const float thr = rcSqr(1.0f/16384.0f);
 	const float d = rcVdistSqr(p0, p1);
 	return d < thr;
 }
@@ -449,8 +449,8 @@ void rcCalcGridSize(const float* bmin, const float* bmax, float cs, int* w, int*
 //	cs - (in) grid cell size
 //	ch - (in) grid cell height
 bool rcCreateHeightfield(rcContext* ctx, rcHeightfield& hf, int width, int height,
-	const float* bmin, const float* bmax,
-	float cs, float ch);
+						 const float* bmin, const float* bmax,
+						 float cs, float ch);
 
 // Sets the RC_WALKABLE_AREA for every triangle whose slope is below
 // the maximum walkable slope angle.
@@ -462,7 +462,7 @@ bool rcCreateHeightfield(rcContext* ctx, rcHeightfield& hf, int width, int heigh
 //	nt - (in) triangle count
 //	areas - (out) array of triangle area types
 void rcMarkWalkableTriangles(rcContext* ctx, const float walkableSlopeAngle, const float* verts, int nv,
-	const int* tris, int nt, unsigned char* areas);
+							 const int* tris, int nt, unsigned char* areas); 
 
 // Sets the RC_NULL_AREA for every triangle whose slope is steeper than
 // the maximum walkable slope angle.
@@ -474,7 +474,7 @@ void rcMarkWalkableTriangles(rcContext* ctx, const float walkableSlopeAngle, con
 //	nt - (in) triangle count
 //	areas - (out) array of triangle are types
 void rcClearUnwalkableTriangles(rcContext* ctx, const float walkableSlopeAngle, const float* verts, int nv,
-	const int* tris, int nt, unsigned char* areas);
+								const int* tris, int nt, unsigned char* areas); 
 
 // Adds span to heightfield.
 // The span addition can set to favor flags. If the span is merged to
@@ -487,8 +487,8 @@ void rcClearUnwalkableTriangles(rcContext* ctx, const float walkableSlopeAngle, 
 //  flags - (in) span flags (zero or WALKABLE)
 //  flagMergeThr - (in) merge threshold.
 void rcAddSpan(rcContext* ctx, rcHeightfield& solid, const int x, const int y,
-	const unsigned short smin, const unsigned short smax,
-	const unsigned short area, const int flagMergeThr);
+			   const unsigned short smin, const unsigned short smax,
+			   const unsigned short area, const int flagMergeThr);
 
 // Rasterizes a triangle into heightfield spans.
 // Params:
@@ -497,8 +497,8 @@ void rcAddSpan(rcContext* ctx, rcHeightfield& solid, const int x, const int y,
 //	solid - (in) heightfield where the triangle is rasterized
 //  flagMergeThr - (in) distance in voxel where walkable flag is favored over non-walkable.
 void rcRasterizeTriangle(rcContext* ctx, const float* v0, const float* v1, const float* v2,
-	const unsigned char area, rcHeightfield& solid,
-	const int flagMergeThr = 1);
+						 const unsigned char area, rcHeightfield& solid,
+						 const int flagMergeThr = 1);
 
 // Rasterizes indexed triangle mesh into heightfield spans.
 // Params:
@@ -510,8 +510,8 @@ void rcRasterizeTriangle(rcContext* ctx, const float* v0, const float* v1, const
 //	solid - (in) heightfield where the triangles are rasterized
 //  flagMergeThr - (in) distance in voxel where walkable flag is favored over non-walkable.
 void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int nv,
-	const int* tris, const unsigned char* areas, const int nt,
-	rcHeightfield& solid, const int flagMergeThr = 1);
+						  const int* tris, const unsigned char* areas, const int nt,
+						  rcHeightfield& solid, const int flagMergeThr = 1);
 
 // Rasterizes indexed triangle mesh into heightfield spans.
 // Params:
@@ -523,8 +523,8 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int nv,
 //	solid - (in) heightfield where the triangles are rasterized
 //  flagMergeThr - (in) distance in voxel where walkable flag is favored over non-walkable.
 void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int nv,
-	const unsigned short* tris, const unsigned char* areas, const int nt,
-	rcHeightfield& solid, const int flagMergeThr = 1);
+						  const unsigned short* tris, const unsigned char* areas, const int nt,
+						  rcHeightfield& solid, const int flagMergeThr = 1);
 
 // Rasterizes the triangles into heightfield spans.
 // Params:
@@ -533,7 +533,7 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int nv,
 //	nt - (in) triangle count
 //	solid - (in) heightfield where the triangles are rasterized
 void rcRasterizeTriangles(rcContext* ctx, const float* verts, const unsigned char* areas, const int nt,
-	rcHeightfield& solid, const int flagMergeThr = 1);
+						  rcHeightfield& solid, const int flagMergeThr = 1);
 
 // Marks non-walkable low obstacles as walkable if they are closer than walkableClimb
 // from a walkable surface. Applying this filter allows to step over low hanging
@@ -552,7 +552,7 @@ void rcFilterLowHangingWalkableObstacles(rcContext* ctx, const int walkableClimb
 //	walkableClimb - (in) maximum height between grid cells the agent can climb
 //	solid - (in/out) heightfield describing the solid space
 void rcFilterLedgeSpans(rcContext* ctx, const int walkableHeight,
-	const int walkableClimb, rcHeightfield& solid);
+						const int walkableClimb, rcHeightfield& solid);
 
 // Removes WALKABLE flag from all spans which have smaller than
 // 'walkableHeight' clearance above them.
@@ -576,7 +576,7 @@ int rcGetHeightFieldSpanCount(rcContext* ctx, rcHeightfield& hf);
 //	chf - (out) compact heightfield representing the open space.
 // Returns false if operation ran out of memory.
 bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const int walkableClimb,
-	rcHeightfield& hf, rcCompactHeightfield& chf);
+							   rcHeightfield& hf, rcCompactHeightfield& chf);
 
 // Erodes walkable area.
 // Params:
@@ -597,7 +597,7 @@ bool rcMedianFilterWalkableArea(rcContext* ctx, rcCompactHeightfield& chf);
 //  areaId - (in) area ID to mark.
 //	chf - (in/out) compact heightfield to mark.
 void rcMarkBoxArea(rcContext* ctx, const float* bmin, const float* bmax, unsigned char areaId,
-	rcCompactHeightfield& chf);
+				   rcCompactHeightfield& chf);
 
 // Marks the area of the convex polygon into the area type of the compact heightfield.
 // Params:
@@ -607,8 +607,8 @@ void rcMarkBoxArea(rcContext* ctx, const float* bmin, const float* bmax, unsigne
 //  areaId - (in) area ID to mark.
 //	chf - (in/out) compact heightfield to mark.
 void rcMarkConvexPolyArea(rcContext* ctx, const float* verts, const int nverts,
-	const float hmin, const float hmax, unsigned char areaId,
-	rcCompactHeightfield& chf);
+						  const float hmin, const float hmax, unsigned char areaId,
+						  rcCompactHeightfield& chf);
 
 // Builds distance field and stores it into the combat heightfield.
 // Params:
@@ -630,7 +630,7 @@ bool rcBuildDistanceField(rcContext* ctx, rcCompactHeightfield& chf);
 //	maxMergeRegionArea - (in) the largest allowed region area which can be merged.
 // Returns false if operation ran out of memory.
 bool rcBuildRegions(rcContext* ctx, rcCompactHeightfield& chf,
-	const int borderSize, const int minRegionArea, const int mergeRegionArea);
+					const int borderSize, const int minRegionArea, const int mergeRegionArea);
 
 // Divides the walkable heighfied into simple regions using simple monotone partitioning.
 // Each region has only one contour and no overlaps.
@@ -646,7 +646,7 @@ bool rcBuildRegions(rcContext* ctx, rcCompactHeightfield& chf,
 //	maxMergeRegionArea - (in) the largest allowed regions size which can be merged.
 // Returns false if operation ran out of memory.
 bool rcBuildRegionsMonotone(rcContext* ctx, rcCompactHeightfield& chf,
-	const int borderSize, const int minRegionArea, const int mergeRegionArea);
+							const int borderSize, const int minRegionArea, const int mergeRegionArea);
 
 // Builds simplified contours from the regions outlines.
 // Params:
@@ -657,8 +657,8 @@ bool rcBuildRegionsMonotone(rcContext* ctx, rcCompactHeightfield& chf,
 //	flags - (in) build flags, see rcBuildContoursFlags.
 // Returns false if operation ran out of memory.
 bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
-	const float maxError, const int maxEdgeLen,
-	rcContourSet& cset, const int flags = RC_CONTOUR_TESS_WALL_EDGES);
+					 const float maxError, const int maxEdgeLen,
+					 rcContourSet& cset, const int flags = RC_CONTOUR_TESS_WALL_EDGES);
 
 // Builds connected convex polygon mesh from contour polygons.
 // Params:
@@ -679,8 +679,8 @@ bool rcMergePolyMeshes(rcContext* ctx, rcPolyMesh** meshes, const int nmeshes, r
 //	pmdtl - (out) detail mesh.
 // Returns false if operation ran out of memory.
 bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompactHeightfield& chf,
-	const float sampleDist, const float sampleMaxError,
-	rcPolyMeshDetail& dmesh);
+						   const float sampleDist, const float sampleMaxError,
+						   rcPolyMeshDetail& dmesh);
 
 bool rcMergePolyMeshDetails(rcContext* ctx, rcPolyMeshDetail** meshes, const int nmeshes, rcPolyMeshDetail& mesh);
 

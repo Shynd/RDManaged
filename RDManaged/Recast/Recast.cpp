@@ -44,8 +44,8 @@ void rcContext::log(const rcLogCategory category, const char* format, ...)
 	int len = vsnprintf(msg, MSG_SIZE, format, ap);
 	if (len >= MSG_SIZE)
 	{
-		len = MSG_SIZE - 1;
-		msg[MSG_SIZE - 1] = '\0';
+		len = MSG_SIZE-1;
+		msg[MSG_SIZE-1] = '\0';
 	}
 	va_end(ap);
 	doLog(category, msg, len);
@@ -151,7 +151,7 @@ void rcCalcBounds(const float* verts, int nv, float* bmin, float* bmax)
 	rcVcopy(bmax, verts);
 	for (int i = 1; i < nv; ++i)
 	{
-		const float* v = &verts[i * 3];
+		const float* v = &verts[i*3];
 		rcVmin(bmin, v);
 		rcVmax(bmax, v);
 	}
@@ -159,17 +159,17 @@ void rcCalcBounds(const float* verts, int nv, float* bmin, float* bmax)
 
 void rcCalcGridSize(const float* bmin, const float* bmax, float cs, int* w, int* h)
 {
-	*w = (int)((bmax[0] - bmin[0]) / cs + 0.5f);
-	*h = (int)((bmax[2] - bmin[2]) / cs + 0.5f);
+	*w = (int)((bmax[0] - bmin[0])/cs+0.5f);
+	*h = (int)((bmax[2] - bmin[2])/cs+0.5f);
 }
 
 bool rcCreateHeightfield(rcContext* /*ctx*/, rcHeightfield& hf, int width, int height,
-	const float* bmin, const float* bmax,
-	float cs, float ch)
+						 const float* bmin, const float* bmax,
+						 float cs, float ch)
 {
 	// TODO: VC complains about unref formal variable, figure out a way to handle this better.
-	//	rcAssert(ctx);
-
+//	rcAssert(ctx);
+	
 	hf.width = width;
 	hf.height = height;
 	rcVcopy(hf.bmin, bmin);
@@ -193,21 +193,21 @@ static void calcTriNormal(const float* v0, const float* v1, const float* v2, flo
 }
 
 void rcMarkWalkableTriangles(rcContext* /*ctx*/, const float walkableSlopeAngle,
-	const float* verts, int /*nv*/,
-	const int* tris, int nt,
-	unsigned char* areas)
+							 const float* verts, int /*nv*/,
+							 const int* tris, int nt,
+							 unsigned char* areas)
 {
 	// TODO: VC complains about unref formal variable, figure out a way to handle this better.
-	//	rcAssert(ctx);
-
-	const float walkableThr = cosf(walkableSlopeAngle / 180.0f*RC_PI);
+//	rcAssert(ctx);
+	
+	const float walkableThr = cosf(walkableSlopeAngle/180.0f*RC_PI);
 
 	float norm[3];
-
+	
 	for (int i = 0; i < nt; ++i)
 	{
-		const int* tri = &tris[i * 3];
-		calcTriNormal(&verts[tri[0] * 3], &verts[tri[1] * 3], &verts[tri[2] * 3], norm);
+		const int* tri = &tris[i*3];
+		calcTriNormal(&verts[tri[0]*3], &verts[tri[1]*3], &verts[tri[2]*3], norm);
 		// Check if the face is walkable.
 		if (norm[1] > walkableThr)
 			areas[i] = RC_WALKABLE_AREA;
@@ -215,21 +215,21 @@ void rcMarkWalkableTriangles(rcContext* /*ctx*/, const float walkableSlopeAngle,
 }
 
 void rcClearUnwalkableTriangles(rcContext* /*ctx*/, const float walkableSlopeAngle,
-	const float* verts, int /*nv*/,
-	const int* tris, int nt,
-	unsigned char* areas)
+								const float* verts, int /*nv*/,
+								const int* tris, int nt,
+								unsigned char* areas)
 {
 	// TODO: VC complains about unref formal variable, figure out a way to handle this better.
-	//	rcAssert(ctx);
-
-	const float walkableThr = cosf(walkableSlopeAngle / 180.0f*RC_PI);
-
+//	rcAssert(ctx);
+	
+	const float walkableThr = cosf(walkableSlopeAngle/180.0f*RC_PI);
+	
 	float norm[3];
-
+	
 	for (int i = 0; i < nt; ++i)
 	{
-		const int* tri = &tris[i * 3];
-		calcTriNormal(&verts[tri[0] * 3], &verts[tri[1] * 3], &verts[tri[2] * 3], norm);
+		const int* tri = &tris[i*3];
+		calcTriNormal(&verts[tri[0]*3], &verts[tri[1]*3], &verts[tri[2]*3], norm);
 		// Check if the face is walkable.
 		if (norm[1] <= walkableThr)
 			areas[i] = RC_NULL_AREA;
@@ -239,8 +239,8 @@ void rcClearUnwalkableTriangles(rcContext* /*ctx*/, const float walkableSlopeAng
 int rcGetHeightFieldSpanCount(rcContext* /*ctx*/, rcHeightfield& hf)
 {
 	// TODO: VC complains about unref formal variable, figure out a way to handle this better.
-	//	rcAssert(ctx);
-
+//	rcAssert(ctx);
+	
 	const int w = hf.width;
 	const int h = hf.height;
 	int spanCount = 0;
@@ -259,12 +259,12 @@ int rcGetHeightFieldSpanCount(rcContext* /*ctx*/, rcHeightfield& hf)
 }
 
 bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const int walkableClimb,
-	rcHeightfield& hf, rcCompactHeightfield& chf)
+							   rcHeightfield& hf, rcCompactHeightfield& chf)
 {
 	rcAssert(ctx);
-
+	
 	ctx->startTimer(RC_TIMER_BUILD_COMPACTHEIGHTFIELD);
-
+	
 	const int w = hf.width;
 	const int h = hf.height;
 	const int spanCount = rcGetHeightFieldSpanCount(ctx, hf);
@@ -302,9 +302,9 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 		return false;
 	}
 	memset(chf.areas, RC_NULL_AREA, sizeof(unsigned char)*spanCount);
-
+	
 	const int MAX_HEIGHT = 0xffff;
-
+	
 	// Fill in cells and spans.
 	int idx = 0;
 	for (int y = 0; y < h; ++y)
@@ -314,7 +314,7 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 			const rcSpan* s = hf.spans[x + y*w];
 			// If there are no spans at this cell, just leave the data to index=0, count=0.
 			if (!s) continue;
-			rcCompactCell& c = chf.cells[x + y*w];
+			rcCompactCell& c = chf.cells[x+y*w];
 			c.index = idx;
 			c.count = 0;
 			while (s)
@@ -335,17 +335,17 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 	}
 
 	// Find neighbour connections.
-	const int MAX_LAYERS = RC_NOT_CONNECTED - 1;
+	const int MAX_LAYERS = RC_NOT_CONNECTED-1;
 	int tooHighNeighbour = 0;
 	for (int y = 0; y < h; ++y)
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcCompactCell& c = chf.cells[x + y*w];
-			for (int i = (int)c.index, ni = (int)(c.index + c.count); i < ni; ++i)
+			const rcCompactCell& c = chf.cells[x+y*w];
+			for (int i = (int)c.index, ni = (int)(c.index+c.count); i < ni; ++i)
 			{
 				rcCompactSpan& s = chf.spans[i];
-
+				
 				for (int dir = 0; dir < 4; ++dir)
 				{
 					rcSetCon(s, dir, RC_NOT_CONNECTED);
@@ -354,15 +354,15 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 					// First check that the neighbour cell is in bounds.
 					if (nx < 0 || ny < 0 || nx >= w || ny >= h)
 						continue;
-
+						
 					// Iterate over all neighbour spans and check if any of the is
 					// accessible from current cell.
-					const rcCompactCell& nc = chf.cells[nx + ny*w];
-					for (int k = (int)nc.index, nk = (int)(nc.index + nc.count); k < nk; ++k)
+					const rcCompactCell& nc = chf.cells[nx+ny*w];
+					for (int k = (int)nc.index, nk = (int)(nc.index+nc.count); k < nk; ++k)
 					{
 						const rcCompactSpan& ns = chf.spans[k];
 						const int bot = rcMax(s.y, ns.y);
-						const int top = rcMin(s.y + s.h, ns.y + ns.h);
+						const int top = rcMin(s.y+s.h, ns.y+ns.h);
 
 						// Check that the gap between the spans is walkable,
 						// and that the climb height between the gaps is not too high.
@@ -379,45 +379,45 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 							break;
 						}
 					}
-
+					
 				}
 			}
 		}
 	}
-
+	
 	if (tooHighNeighbour > MAX_LAYERS)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildCompactHeightfield: Heightfield has too many layers %d (max: %d)",
-			tooHighNeighbour, MAX_LAYERS);
+				 tooHighNeighbour, MAX_LAYERS);
 	}
-
+		
 	ctx->stopTimer(RC_TIMER_BUILD_COMPACTHEIGHTFIELD);
-
+	
 	return true;
 }
 
 /*
 static int getHeightfieldMemoryUsage(const rcHeightfield& hf)
 {
-int size = 0;
-size += sizeof(hf);
-size += hf.width * hf.height * sizeof(rcSpan*);
-
-rcSpanPool* pool = hf.pools;
-while (pool)
-{
-size += (sizeof(rcSpanPool) - sizeof(rcSpan)) + sizeof(rcSpan)*RC_SPANS_PER_POOL;
-pool = pool->next;
-}
-return size;
+	int size = 0;
+	size += sizeof(hf);
+	size += hf.width * hf.height * sizeof(rcSpan*);
+	
+	rcSpanPool* pool = hf.pools;
+	while (pool)
+	{
+		size += (sizeof(rcSpanPool) - sizeof(rcSpan)) + sizeof(rcSpan)*RC_SPANS_PER_POOL;
+		pool = pool->next;
+	}
+	return size;
 }
 
 static int getCompactHeightFieldMemoryusage(const rcCompactHeightfield& chf)
 {
-int size = 0;
-size += sizeof(rcCompactHeightfield);
-size += sizeof(rcCompactSpan) * chf.spanCount;
-size += sizeof(rcCompactCell) * chf.width * chf.height;
-return size;
+	int size = 0;
+	size += sizeof(rcCompactHeightfield);
+	size += sizeof(rcCompactSpan) * chf.spanCount;
+	size += sizeof(rcCompactCell) * chf.width * chf.height;
+	return size;
 }
 */
